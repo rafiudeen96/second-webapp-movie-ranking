@@ -26,7 +26,7 @@ class movie(db.Model):
     title:Mapped[str] = mapped_column(String,unique=True,nullable=False)
     year:Mapped[int] = mapped_column(Integer,nullable=False)
     description:Mapped[str] = mapped_column(String,nullable=False)
-    rating:Mapped[float] = mapped_column(Float)
+    rating:Mapped[float] = mapped_column(Float,nullable=True)
     ranking:Mapped[int] = mapped_column(Integer)
     review:Mapped[str] = mapped_column(String)
     image_url:Mapped[str] = mapped_column(String,nullable=False)
