@@ -158,7 +158,7 @@ def select_movie():
     title = request.args.get('title')
     year = request.args.get('year')
     poster = request.args.get('poster')
-    new_movie = movie(title=title,year=year,image_url=poster,description=title)
+    new_movie = movie(title=title,year=year,image_url=poster,description=title,rating=7,ranking=1,review="Good Movie")
     db.session.add(new_movie)
     db.session.commit()
 
