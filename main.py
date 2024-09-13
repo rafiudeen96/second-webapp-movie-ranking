@@ -1,6 +1,7 @@
 import requests
 from flask_wtf import FlaskForm
 from wtforms import StringField,SubmitField
+from wtforms.validators import DataRequired
 from flask_bootstrap import Bootstrap5
 from flask import Flask,render_template,redirect,url_for,request
 from flask_sqlalchemy import SQLAlchemy
@@ -33,12 +34,12 @@ class movie(db.Model):
 
 
 class edit_form(FlaskForm):
-    rating = StringField("Your rating out of 10. E.g 7.5")
+    rating = StringField("Your rating out of 10. E.g 7.5",validators=[DataRequired()])
     review = StringField("Your review")
     submit = SubmitField("Done")
 
 class add_form(FlaskForm):
-    add_movie = StringField("Movie Title")
+    add_movie = StringField("Movie Title",validators=[DataRequired()])
     submit = SubmitField("Add Movie")
 
 with app.app_context():
@@ -122,17 +123,18 @@ def home():
 def edit(id):
     edit= edit_form()
     if request.method == "POST":
-        rating = edit.rating.data
-        review = edit.review.data
-        movie_to_edit = db.session.execute(db.select(movie).where(movie.id==id)).scalar()
-        if rating != "":
-            movie_to_edit.rating = float(rating)
-        if review != "":
-            movie_to_edit.review = review
+        if edit.validate_on_submit():
+            rating = edit.rating.data
+            review = edit.review.data
+            movie_to_edit = db.session.execute(db.select(movie).where(movie.id==id)).scalar()
+            if rating != "":
+                movie_to_edit.rating = float(rating)
+            if review != "":
+                movie_to_edit.review = review
 
-        db.session.commit()
+            db.session.commit()
 
-        return redirect(url_for('home'))
+            return redirect(url_for('home'))
     return render_template("edit.html",form=edit,id=id)
 
 @app.route("/delete/<int:id>")
@@ -146,11 +148,12 @@ def delete(id):
 def add_movie():
     add_movie = add_form()
     if request.method == "POST":
-        movie_name = add_movie.add_movie.data
+        if add_movie.validate_on_submit():
+            movie_name = add_movie.add_movie.data
 
-        movies = requests.get(f"https://www.omdbapi.com/?s={movie_name}&apikey=37f1822c").json()['Search']
+            movies = requests.get(f"https://www.omdbapi.com/?s={movie_name}&apikey=37f1822c").json()['Search']
 
-        return render_template("select.html",movies=movies)
+            return render_template("select.html",movies=movies)
     return render_template("add.html",add_movie=add_movie)
 
 @app.route("/select-movie")
