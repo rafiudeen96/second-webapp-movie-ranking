@@ -46,7 +46,7 @@ with app.app_context():
     db.create_all()
 
 def function_ranking(duplicate_ranking=False):
-    all_movies = db.session.execute(db.select(movie).order_by(movie.rating.desc())).scalars()
+    all_movies = db.session.execute(db.select(movie).order_by(movie.rating.desc(),movie.title)).scalars()
 
     rating_occur_dict ={}
 
@@ -62,7 +62,7 @@ def function_ranking(duplicate_ranking=False):
         movie_rating_list = []
         movie_id_list = []
         movie_title_list = []
-        all_movies_inner_loop = db.session.execute(db.select(movie).order_by(movie.rating.desc())).scalars()
+        all_movies_inner_loop = db.session.execute(db.select(movie).order_by(movie.rating.desc(),movie.title)).scalars()
 
         for moviee in all_movies_inner_loop:
 
